@@ -14,7 +14,16 @@ float *descente(float A[N][N], float B[N], int n)
 
   /******Implement the solution here******/
   /***************************************/
-  
+  int i, j;
+  double s;
+  x[0]=B[0]/A[0][0];
+  for(i=1;i<n;i++)
+  {
+        s=0;
+        for(j=0;j<i;j++)
+               s=s+A[i][j] * x[j];
+        x[i]=(B[i]-s)/A[i][i];
+  }
   /****************************************/
 
   return (x);
