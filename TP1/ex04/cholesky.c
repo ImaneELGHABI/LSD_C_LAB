@@ -3,6 +3,45 @@
 #include <math.h>
 #define N 10
 
+double *descente(double A[N][N], double B[N], int n)
+{
+  double   *x;
+  x = malloc(sizeof(double) * n);
+  int i, j;
+  double s;
+  x[0]=B[0]/A[0][0];
+  for(i=1;i<n;i++)
+  {
+        s=0;
+        for(j=0;j<i;j++)
+               s=s+A[i][j] * x[j];
+        x[i]=(B[i]-s)/A[i][i];
+  }
+ 
+
+  return (x);
+}
+
+double *remontee(double A[N][N], double B[N], int n)
+{
+
+  double *x;
+  x = malloc(sizeof(double) * n);
+  int i, j;
+  double s;
+  x[n-1]=B[n-1]/A[n-1][n-1];
+  for(i=n-2;i>=0;i--)
+  {
+         s=0;
+         for(j=i+1;j<n;j++)
+                s+=A[i][j] * x[j];
+         x[i]=(B[i]-s)/A[i][i];
+   }
+  return (x);
+}
+
+
+
 int main()
 {
   /* 
@@ -12,7 +51,11 @@ int main()
   */
   /*Of course I will code the solution by myself*/
   	int i, j, k, n;
-        double X[N], T[N][N], factor, I[N][N], IT[N][N], Y[N];
+        double T[N][N];
+        double *X;
+        X = malloc(sizeof(double)*n);
+        double *Y;
+        Y=malloc(sizeof(double)*n);
 	printf("Donner la taille de la matrice: ");
 	scanf("%d", &n);
 	double c[N][N], A[N][N], B[N], s, s1;
@@ -51,6 +94,7 @@ int main()
 		}
 	}
         printf("\n");
+        printf("C:\t");
 	for(i=0;i<n;i++)
 	{
 		for(j=0;j<n;j++)
@@ -68,143 +112,18 @@ int main()
                
                 }
                 printf("\n");
-        }
-        /*Inverse of c matrix*/
-        for(i=0;i<n;i++)
-	 {
-         	  for(j=0;j<n;j++)
-		  {
-         		   if(i==j)
-			   {
-			    	c[i][j+n] = 1;
-			   }
-			   else
-			   {
-			    	c[i][j+n] = 0;
-			   }
-		  }
-	 }
-         for(i=0;i<n;i++)
-       	{
-		  for(j=0;j<n;j++)
-		  {
-			   if(i!=j)
-			   {
-				    factor= c[j][i]/c[i][i];
-				    for(k=0;k<2*n;k++)
-				    {
-				     	c[j][k] = c[j][k] - factor*c[i][k];
-				    }
-			   }
-		  }
-	 }
-         for(i=0;i<n;i++)
-	{
-		  for(j=n;j<2*n;j++)
-		  {
-		   	I[i][j] = c[i][j]/c[i][i];
-		  }
-	 }
-           
-         printf("\nInverse Matrix c is:\n");
-	 for(i=0;i<n;i++)
-	 {
-		  for(j=n;j<2*n;j++)
-		  {
-		   	printf("%lf\t",I[i][j]);
-		  }
-		  printf("\n");
-	 }
-         /*Inverse of T matrix*/
-         for(i=0;i<n;i++)
-         {
-                  for(j=0;j<n;j++)
-                  {
-                           if(i==j)
-                           {
-                                T[i][j+n] = 1;
-                           }
-                           else
-                           {
-                                T[i][j+n] = 0;
-                           }
-                  }
-         }
-         for(i=0;i<n;i++)
-        {
-                  for(j=0;j<n;j++)
-                  {
-                           if(i!=j)
-                           {
-                                    factor= T[j][i]/T[i][i];
-                                    for(k=0;k<2*n;k++)
-                                    {
-                                        T[j][k] = T[j][k] - factor*T[i][k];
-                                    }
-                           }
-                  }
-         }
-         for(i=0;i<n;i++)
-        {
-                  for(j=n;j<2*n;j++)
-                  {
-                        IT[i][j] = T[i][j]/T[i][i];
-                  }
-         }
-         printf("\nInverse Matrix T is:\n");
-         for(i=0;i<n;i++)
-         {
-                  for(j=n;j<2*n;j++)
-                  {
-                        printf("%lf\t",T[i][j]);
-                  }
-                  printf("\n");
-         }
-         /*Resulotion of the system*/
-         printf("Y=I*B:\n");
-         Y[0]=B[0]*I[0][0];
- 
-         for(i=1;i<n;i++)
-         {
-              double s=0;
-              for(j=0;j<i;j++)
-                         s+=c[i][j]*Y[j];
-              Y[i]=(B[i]-s)*I[i][i];
-         }
-         for(i=0;i<n;i++)
-                  printf("%lf\t", Y[i]);
-         printf("\n");
-         Y[0]=B[0]/c[0][0];
-         for(i=1;i<n;i++)
-         {
-                double s=0;
-                for(j=0;j<i;j++)
-                {
-                      s+=c[i][j]*Y[j];
-                }
-                Y[i]=(B[i]-s)/c[i][i];
-         }
-        for(i=0;i<n;i++)
-        {
-               printf("Y[%d]=%lf\t", i, Y[i]);
-        }
-        X[n-1]=Y[n-1]/T[n-1][n-1];
-	for(int i=n-2;i>=0;i--)
-	{
-		s=0;
-		for(int j=i;j<n;j++)
-			s=s+T[i][j]*X[j];
-		X[i]=(Y[i]-s)/T[i][i];
-      	}
-     
-         for(i=0;i<n;i++)
-         {
-               printf("X[%d]=%lf\t", i, X[i]);
-         }
+        }        
+         /*The system resolution*/
+         double *V1;
+         double *V2;
+            
+         V1 = descente(c, B, n);
+         V2 = remontee(T, V1, n);
 
-/*I tried two methods for the resolution but none of them gives me the correct X vector, I don't know why*/
-
-	 return(0);
+         printf("%lf, %lf, %lf, %lf\n", V1[0], V1[1], V1[2], V1[3]);
+         printf("%lf, %lf, %lf, %lf\n", V2[0], V2[1], V2[3], V2[3]);
+	 
+         return(0);
   
 }
 
